@@ -1,3 +1,21 @@
+# Calculator with History
+
+A full-stack calculator application built using:
+- React (Frontend)
+- Flask (Backend)
+- PostgreSQL (Database)
+
+## Features
+- Basic & scientific calculations
+- Stores last 10 calculations
+- Clear history functionality
+
+## How to Run
+
+### Backend
+```bash
+python app.py
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
