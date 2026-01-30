@@ -1,24 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css"; // <--- Add this line!
+import Header from "./Header";
+import Calculator from "./Calculator";
+import Footer from "./Footer";
+import History from "./History";
 
 function App() {
+  const studentName = "Valencio William";
+  const todayDate = new Date().toDateString();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Header name={studentName} />
+
+      <div className="app-layout">
+        <Calculator />
+        <History />
+      </div>
+
+      <Footer date={todayDate} />
+    </>
   );
 }
 

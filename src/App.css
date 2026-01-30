@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+.app-layout {
+  display: flex;
+  justify-content: center; /* Keeps the pair centered on the screen */
+  align-items: flex-start; /* Prevents one component from stretching to match the height of the other */
+  gap: 40px;               /* Increases space between Calculator and History */
+  margin: 40px auto;       /* Centers the layout container itself */
+  max-width: 1200px;       /* Prevents them from spreading too far apart on huge monitors */
+  padding: 0 20px;         /* Prevents components from touching screen edges on tablets */
+}

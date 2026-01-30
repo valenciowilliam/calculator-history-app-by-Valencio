@@ -1,0 +1,8 @@
+## How to Run the Project
+
+### Backend
+cd backend
+python app.py
+
+### Frontend
+npm start
