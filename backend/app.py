@@ -1,4 +1,5 @@
 import math
+import os
 import psycopg2
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -10,16 +11,10 @@ CORS(app)
 # PostgreSQL connection function
 # -------------------------------
 def get_db_connection():
-    return psycopg2.connect(
-        database="calculator_db",
-        user="postgres",
-        password="students",  # 🔴 change this
-        host="localhost",
-        port="5432"
-    )
+    return psycopg2.connect(os.environ.get("DATABASE_URL"))
 
 # -------------------------------
-# EXISTING CALCULATOR API (UNCHANGED)
+# CALCULATE API
 # -------------------------------
 @app.route("/calculate", methods=["POST"])
 def calculate():
@@ -33,13 +28,15 @@ def calculate():
 
         result = eval(safe_expression)
 
-        # 🔹 SAVE TO DATABASE (NEW)
+        # Save to database
         conn = get_db_connection()
         cur = conn.cursor()
+
         cur.execute(
             "INSERT INTO calculation_history (expression, result) VALUES (%s, %s)",
             (expression, str(result))
         )
+
         conn.commit()
         cur.close()
         conn.close()
@@ -49,11 +46,13 @@ def calculate():
 
     return jsonify({"result": result})
 
+
 # -------------------------------
-# NEW: FETCH LAST 10 CALCULATIONS
+# FETCH LAST 10 CALCULATIONS
 # -------------------------------
 @app.route("/history", methods=["GET"])
 def get_history():
+
     conn = get_db_connection()
     cur = conn.cursor()
 
@@ -65,10 +64,12 @@ def get_history():
     """)
 
     rows = cur.fetchall()
+
     cur.close()
     conn.close()
 
     history = []
+
     for row in rows:
         history.append({
             "expression": row[0],
@@ -78,11 +79,13 @@ def get_history():
 
     return jsonify(history)
 
+
 # -------------------------------
-# NEW: CLEAR ALL HISTORY
+# CLEAR ALL HISTORY
 # -------------------------------
 @app.route("/history", methods=["DELETE"])
 def clear_history():
+
     conn = get_db_connection()
     cur = conn.cursor()
 
@@ -96,7 +99,8 @@ def clear_history():
 
 
 # -------------------------------
-# RUN SERVER
+# RUN SERVER (FOR RENDER)
 # -------------------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
