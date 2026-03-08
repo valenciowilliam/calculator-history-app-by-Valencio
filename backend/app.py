@@ -1,5 +1,4 @@
 import math
-import os
 import psycopg2
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -11,10 +10,16 @@ CORS(app)
 # PostgreSQL connection function
 # -------------------------------
 def get_db_connection():
-    return psycopg2.connect(os.environ.get("DATABASE_URL"))
+    return psycopg2.connect(
+        database="calculator_db",
+        user="postgres",
+        password="students",  # 🔴 change this
+        host="localhost",
+        port="5432"
+    )
 
 # -------------------------------
-# CALCULATE API
+# EXISTING CALCULATOR API (UNCHANGED)
 # -------------------------------
 @app.route("/calculate", methods=["POST"])
 def calculate():
@@ -28,15 +33,13 @@ def calculate():
 
         result = eval(safe_expression)
 
-        # Save to database
+        # 🔹 SAVE TO DATABASE (NEW)
         conn = get_db_connection()
         cur = conn.cursor()
-
         cur.execute(
             "INSERT INTO calculation_history (expression, result) VALUES (%s, %s)",
             (expression, str(result))
         )
-
         conn.commit()
         cur.close()
         conn.close()
@@ -46,13 +49,11 @@ def calculate():
 
     return jsonify({"result": result})
 
-
 # -------------------------------
-# FETCH LAST 10 CALCULATIONS
+# NEW: FETCH LAST 10 CALCULATIONS
 # -------------------------------
 @app.route("/history", methods=["GET"])
 def get_history():
-
     conn = get_db_connection()
     cur = conn.cursor()
 
@@ -64,12 +65,10 @@ def get_history():
     """)
 
     rows = cur.fetchall()
-
     cur.close()
     conn.close()
 
     history = []
-
     for row in rows:
         history.append({
             "expression": row[0],
@@ -79,28 +78,8 @@ def get_history():
 
     return jsonify(history)
 
-
 # -------------------------------
-# CLEAR ALL HISTORY
-# -------------------------------
-@app.route("/history", methods=["DELETE"])
-def clear_history():
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute("DELETE FROM calculation_history;")
-    conn.commit()
-
-    cur.close()
-    conn.close()
-
-    return jsonify({"message": "History cleared successfully"})
-
-
-# -------------------------------
-# RUN SERVER (FOR RENDER)
+# RUN SERVER
 # -------------------------------
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True)
