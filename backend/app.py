@@ -80,3 +80,22 @@ def get_history():
 # -------------------------------
 if __name__ == "__main__":
     app.run(debug=True)
+
+# -------------------------------
+# NEW: CLEAR ALL HISTORY
+# -------------------------------
+@app.route("/history", methods=["DELETE"])
+def clear_history():
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # This deletes all rows from the table
+        cur.execute("DELETE FROM calculation_history")
+
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"message": "History cleared successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
