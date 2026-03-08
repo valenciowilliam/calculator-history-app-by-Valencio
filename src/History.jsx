@@ -6,7 +6,7 @@ function History() {
 
   // Fetch history
   const fetchHistory = () => {
-    fetch("http://localhost:5000/history")
+    fetch("https://calculator-history-app-by-valencio.onrender.com/history")
       .then((response) => response.json())
       .then((data) => setHistory(data))
       .catch((error) => console.error("Error fetching history:", error));
@@ -19,7 +19,7 @@ function History() {
 
   // Clear all history
   const clearHistory = () => {
-    fetch("http://localhost:5000/history", {
+    fetch("https://calculator-history-app-by-valencio.onrender.com/history", {
       method: "DELETE",
     })
       .then((response) => response.json())
