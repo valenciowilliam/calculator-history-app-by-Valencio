@@ -1,5 +1,6 @@
 import math
 import psycopg2
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -10,13 +11,9 @@ CORS(app)
 # PostgreSQL connection function
 # -------------------------------
 def get_db_connection():
-    return psycopg2.connect(
-        database="calculator_db",
-        user="postgres",
-        password="students",  # 🔴 change this
-        host="localhost",
-        port="5432"
-    )
+    # Use the Neon string you just copied as the default value here
+    url = os.environ.get("DATABASE_URL", "postgresql://neondb_owner:npg_brV79mtITdEZ@ep-soft-breeze-a1ozxrmx-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require")
+    return psycopg2.connect(url)
 
 # -------------------------------
 # EXISTING CALCULATOR API (UNCHANGED)
